@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      .tracks-list {
+        list-style-type="none";
+      }
+
+      .track {
+        display="flex";
+        justify-content: "space-between";
+        width="500px";
+      }
+    </style>
+  </head>
+  <body>
+    <ul class="tracks-list">
+      {% for track in tracks %}
+      <li class="track">
+        {{ track.item.name }}
+        {{ track.item.duration_ms }}
+      </li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>

@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="script" href="/script/index.js">
+    <!-- <link rel="stylesheet" href="/style/index.css"> -->
+    <title>Hello!</title>
+  </head>
+  <body>
+    <h1>Playlists<h1>
+        <article style="display: flex; flex-direction: column">
+        <a href="http://localhost:8080/play-playlist?id={{ id }}">
+            <h5>{{ name }}</h5>
+            <img src="{{ image_url }}" width="200" height="200">
+          </a>
+          <p>{{ description }}</p>
+        </article>
+  </body>
+</html>

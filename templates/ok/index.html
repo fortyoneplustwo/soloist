@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="/script/index.js" defer></script>
+    <title>Hello!</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden; /* no page-level scrolling */
+      }
+
+      body {
+        display: grid;
+        grid-template-rows: minmax(0, 1fr) 52px; /* 50px content + 2px border */
+      }
+
+      main {
+        overflow-y: auto; /* only this area scrolls */
+        padding: 0 16px;
+      }
+
+      footer {
+        border-top: 2px solid black;
+        overflow: hidden;
+      }
+
+      .player {
+        display: flex;
+        flex-direction: row;
+        height: 50px;
+        align-items: center;
+        gap: 10px;
+        padding: 0 10px;
+      }
+
+      .player img {
+        height: 40px;
+        width: auto;
+      }
+
+      .player .title {
+        flex-grow: 1;
+      }
+
+      article {
+        display: flex;
+        flex-direction: column;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Playlists</h1>
+      <article data-id="{{ id }}">
+        <h5>{{ name }}</h5>
+        <img src="{{ image_url }}" width="200" height="200" />
+        <p>{{ description }}</p>
+      </article>
+    </main>
+
+    <footer id="player">
+      <div class="player">
+        <img src="{{ image_url }}" id="cover" />
+        <span class="title" id="title">Title</span>
+        <button id="connect-btn">Connect</button>
+        <button hidden id="play-btn">Play</button>
+      </div>
+    </footer>
+  </body>
+</html>
