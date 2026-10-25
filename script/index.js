@@ -1,5 +1,10 @@
-const api = "http://127.0.0.1:8080";
 const SPOTIFY_GREEN = "#1db954";
+const DEVICE_ID = "qtpi";
+
+// state
+const curTrack = {
+  uri: "",
+};
 
 // subscribe event listeners
 const playlists = document.getElementsByTagName("article");
@@ -8,15 +13,25 @@ for (const playlist of playlists) {
     event.stopPropagation();
     const uri = event.currentTarget.dataset.id;
     console.log("clicked target:", event.currentTarget);
-    await fetch(`${api}/play-playlist?id=${uri}`);
+    await fetch(`/play-playlist?id=${uri}`);
   });
 }
 
 const connectBtn = document.getElementById("connect-btn");
 console.log(connectBtn);
 connectBtn.addEventListener("click", async () => {
-  console.log("connect button clicked");
+  console.log("connect button ");
   await fetch("/activate");
+});
+
+const playBtn = document.getElementById("play-btn");
+playBtn.addEventListener("click", async (event) => {
+  console.log("play/pause button clicked", event.target);
+  if (event.target.innerText == "play") {
+    await fetch(`/play?id=${curTrack.uri}`);
+  } else {
+    await fetch(`/pause?id=${curTrack.uri}`);
+  }
 });
 
 // subscribe to playback events via SSE
@@ -24,7 +39,6 @@ const eventSource = new EventSource("/subscribe");
 
 const cover = document.getElementById("cover");
 const track = document.getElementById("title");
-const playBtn = document.getElementById("play-btn");
 const player = document.getElementById("player");
 
 eventSource.onmessage = (event) => {
@@ -43,6 +57,7 @@ eventSource.onmessage = (event) => {
         player.style.backgroundColor = "";
       }
 
+      curTrack.uri = state.item.uri.split(":").at(-1);
       cover.src = state.item.decorations.visual_identity.cover[0].url;
       track.textContent = state.item.decorations.identity.name;
       playBtn.innerText = state.status == "paused" ? "play" : "pause";
@@ -53,7 +68,7 @@ eventSource.onmessage = (event) => {
       break;
     }
     case "device_changed": {
-      if (state.device_name == "nixos" && state.is_active) {
+      if (state.device_name == DEVICE_ID && state.is_active) {
         connectBtn.hidden = true;
         playBtn.hidden = false;
         player.style.backgroundColor = SPOTIFY_GREEN;

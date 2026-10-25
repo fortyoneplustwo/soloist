@@ -17,6 +17,8 @@ pub fn dispatch(
         Endpoint::Login => login,
         Endpoint::GetPlaylist => get_playlist,
         Endpoint::PlayPlaylist => play_playlist,
+        Endpoint::Play => no_content,
+        Endpoint::Pause => no_content,
         Endpoint::RegisterAccessToken => register_token,
         Endpoint::Activate => transfer_playback,
         Endpoint::GetScript => no_op,
@@ -109,7 +111,7 @@ fn get_playlist(_cx: &tiny_http::Request, routed: &mut Routed) -> Result<Status,
 fn play_playlist(_cx: &tiny_http::Request, routed: &mut Routed) -> Result<Status, Status> {
     println!("inside play_playlist handler");
 
-    let Some(Command::Play(Key::Raw(params))) = routed.command else {
+    let Some(Command::PlayPlaylist(Key::Raw(params))) = routed.command else {
         return Err((400, "Missing params".into()));
     };
 
@@ -133,6 +135,10 @@ fn play_playlist(_cx: &tiny_http::Request, routed: &mut Routed) -> Result<Status
 
 fn no_op(_cx: &tiny_http::Request, _routed: &mut Routed) -> Result<Status, Status> {
     Ok((200, String::default()))
+}
+
+fn no_content(_cx: &tiny_http::Request, _routed: &mut Routed) -> Result<Status, Status> {
+    Ok((204, String::default()))
 }
 
 fn transfer_playback(_cx: &tiny_http::Request, _routed: &mut Routed) -> Result<Status, Status> {

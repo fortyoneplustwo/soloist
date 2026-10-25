@@ -94,6 +94,7 @@ impl Page {
                 Connection::Close,
             )),
             Page::Playing => Ok((status_code, Vec::default(), None, Connection::Close)),
+            Page::NoContent => Ok((status_code, Vec::default(), None, Connection::Close)),
             Page::Connect => Ok((status_code, Vec::default(), None, Connection::Close)),
             Page::Script => Ok((
                 status_code,

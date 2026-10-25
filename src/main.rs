@@ -1,11 +1,11 @@
 use std::collections::HashMap;
-use std::env;
 use std::net::SocketAddr;
 use std::os::fd::AsRawFd;
 use std::sync::mpsc::{self, Sender};
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
+use std::{env, fs};
 
 use ctl::Key::{self};
 use ctl::json::PlaybackState;
@@ -17,6 +17,7 @@ use ctl::{
 };
 use epoll::ControlOptions::EPOLL_CTL_ADD;
 use serde_json::json;
+use tiny_http::SslConfig;
 
 fn main() {
     dotenv().ok();
@@ -38,7 +39,14 @@ fn main() {
 
     let server_handle = thread::spawn(move || {
         let pool = ThreadPool::new(10).expect("Failed to create thread pool");
-        let server = tiny_http::Server::http(server_addr).expect("Failed to initialize server");
+        let server = tiny_http::Server::https(
+            server_addr,
+            SslConfig {
+                certificate: fs::read("cert.pem").unwrap(),
+                private_key: fs::read("key.pem").unwrap(),
+            },
+        )
+        .expect("Failed to initialize server");
 
         for req in server.incoming_requests() {
             let client = client2.clone();
@@ -114,10 +122,18 @@ fn main() {
                                 "type": "command",
                                 "command": "activate",
                             })),
-                            Command::Play(Key::Parsed(id)) => Some(json!({
+                            Command::PlayPlaylist(Key::Parsed(id)) => Some(json!({
                                 "type": "command",
                                 "command": "play",
                                 "uri": format!("spotify:playlist:{id}"),
+                            })),
+                            Command::Play(_) => Some(json!({
+                                "type": "command",
+                                "command": "play",
+                            })),
+                            Command::Pause(_) => Some(json!({
+                                "type": "command",
+                                "command": "pause",
                             })),
                             _ => None,
                         };

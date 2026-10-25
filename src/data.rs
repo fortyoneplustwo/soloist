@@ -15,6 +15,8 @@ pub enum Endpoint {
     GetScript,
     Subscribe,
     Activate,
+    Play,
+    Pause,
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -37,6 +39,7 @@ pub enum Query<'a> {
 pub enum Command<'a> {
     PlayPlaylist(Key<'a>),
     Play(Key<'a>),
+    Pause(Key<'a>),
     RegisterSubscriber(Key<'a>),
     Activate(Key<'a>),
 }
@@ -51,4 +54,5 @@ pub enum Page {
     Connect,
     Script,
     EventsChan,
+    NoContent,
 }

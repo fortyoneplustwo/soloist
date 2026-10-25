@@ -21,6 +21,8 @@ pub fn get_endpoint(method: &str, path: &str) -> Option<Endpoint> {
         ("GET", "/script/index.js") => Some(Endpoint::GetScript),
         ("GET", "/subscribe") => Some(Endpoint::Subscribe),
         ("GET", "/activate") => Some(Endpoint::Activate),
+        ("GET", "/play") => Some(Endpoint::Play),
+        ("GET", "/pause") => Some(Endpoint::Pause),
         _ => None,
     }
 }
@@ -35,12 +37,16 @@ pub fn get_query<'a>(endpoint: Endpoint, params: &'a str) -> Option<Query<'a>> {
         Endpoint::Login => None,
         Endpoint::GetScript => None,
         Endpoint::Subscribe => None,
+        Endpoint::Play => None,
+        Endpoint::Pause => None,
     }
 }
 
 pub fn get_command<'a>(endpoint: Endpoint, params: &'a str) -> Option<Command<'a>> {
     match endpoint {
-        Endpoint::PlayPlaylist => Some(Command::Play(Key::Raw(params))),
+        Endpoint::Play => Some(Command::Play(Key::Raw(""))),
+        Endpoint::Pause => Some(Command::Pause(Key::Raw(""))),
+        Endpoint::PlayPlaylist => Some(Command::PlayPlaylist(Key::Raw(params))),
         Endpoint::Subscribe => Some(Command::RegisterSubscriber(Key::Raw(params))),
         Endpoint::Activate => Some(Command::Activate(Key::Raw(""))),
         Endpoint::Root => None,
@@ -61,5 +67,7 @@ pub fn get_ok_page(endpoint: Endpoint) -> Page {
         Endpoint::GetScript => Page::Script,
         Endpoint::Subscribe => Page::EventsChan,
         Endpoint::Activate => Page::Connect,
+        Endpoint::Play => Page::NoContent,
+        Endpoint::Pause => Page::NoContent,
     }
 }
